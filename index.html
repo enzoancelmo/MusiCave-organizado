@@ -3,49 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>707 • MusiCave</title>
+  <title>MusiCave | Início</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <header class="header">
     <div class="header-inner">
-      <div class="logo">MusiCave</div>
-
+      <div class="logo">MUSICAVE</div>
       <nav class="menu">
-  <a class="active" href="#">Início</a>
-  <a href="sobre.html">Sobre</a>
-  <a href="tiers.html">Tiers</a>
-  <a href="contato.html">Contato</a>
-</nav>
+        <a class="active" href="index.html">Início</a>
+        <a href="sobre.html">Sobre</a>
+        <a href="tiers.html">Tiers</a>
+      </nav>
 
       <div class="header-actions">
-        <button class="btn ghost" type="button">Entrar</button>
+        <a href="entrar.html" class="btn-nav" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">Entrar</a>
       </div>
     </div>
   </header>
 
   <main class="main">
     <section class="hero">
-      <div class="big404">
-        <div class="n left">7</div>
-
-        <!-- BONECO NO MEIO (vídeo) -->
+      
+      <div class="character-container">
         <div class="character">
           <video class="mascot-video" autoplay muted loop playsinline preload="auto">
             <source src="bg.mp4" type="video/mp4" />
           </video>
         </div>
-
-        <div class="n right">7</div>
       </div>
 
-      <h1>MUSICAVE</h1>
-      <p class="sub">Verifique o endereço ou volte para o início.</p>
+      <h1 class="main-title">MUSI<span class="highlight">CAVE</span></h1>
+      <p class="subSub">A nova era da sua experiência musical digital.</p>
 
-      <button class="pill" id="goHome" type="button">
+      <button class="pill-home" onclick="window.location.href='tiers.html'">
         <span class="pill-dot"></span>
-        Voltar ao início
+        AVALIAR
       </button>
     </section>
   </main>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusiCave | Entrar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">MUSICAVE</div>
+            <nav class="menu">
+                <a href="index.html">Início</a>
+                <a href="sobre.html">Sobre</a>
+                <a href="tiers.html">Tiers</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="login-container">
+        <div class="login-card">
+            <h2>Bem-vindo ao <span class="highlight">MusiCave</span></h2>
+            <p>Acesse sua conta para continuar a experiência.</p>
+
+            <form class="login-form">
+                <div class="input-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-login">Entrar</button>
+                
+                <div class="login-footer">
+                    <a href="#">Esqueceu a senha?</a>
+                    <span>Não tem conta? <a href="#" class="highlight">Cadastre-se</a></span>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script>
+document.querySelector(".login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("password").value;
+
+    try {
+        const res = await fetch("http://localhost:3000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, senha })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert(data.message);
+            return;
+        }
+
+      alert(data.message);
+
+    } catch (err) {
+        alert("Erro ao conectar com servidor");
+    }
+});
+console.log("JS carregou");
+</script>
+
+</body>
+</html>
