@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MusiCave | Entrar</title>
+    <title>MusiCave | Acesso</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="login-body">
@@ -20,61 +20,83 @@
     </header>
 
     <main class="login-container">
-        <div class="login-card">
+        <div id="loginSection" class="login-card fade-in">
             <h2>Bem-vindo ao <span class="highlight">MusiCave</span></h2>
-            <p>Acesse sua conta para continuar a experiência.</p>
+            <p>Acesse sua conta para continuar.</p>
 
             <form class="login-form">
                 <div class="input-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="seu@email.com" required>
+                    <label>E-mail</label>
+                    <input type="email" placeholder="seu@email.com" required>
                 </div>
-
                 <div class="input-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="••••••••" required>
+                    <label>Senha</label>
+                    <input type="password" placeholder="••••••••" required>
                 </div>
-
                 <button type="submit" class="btn-login">Entrar</button>
+                <br>
+                <div class="login-footer">
+                    <a href="javascript:void(0)" onclick="showSection('forgotSection')">Esqueceu a senha?</a>
+                    <br>
+                    <span>Não tem conta? <a href="javascript:void(0)" class="highlight" onclick="showSection('registerSection')">Cadastre-se</a></span>
+                </div>
+            </form>
+        </div>
+
+        <div id="registerSection" class="login-card fade-in hidden">
+            <h2>Criar <span class="highlight">Conta</span></h2>
+            <p>Junte-se à caverna musical.</p>
+
+            <form class="login-form">
+                <div class="input-group">
+                    <label>Nome Completo</label>
+                    <input type="text" placeholder="Como quer ser chamado?" required>
+                </div>
+                <div class="input-group">
+                    <label>E-mail</label>
+                    <input type="email" placeholder="seu@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" placeholder="Mínimo 8 caracteres" required>
+                </div>
+                <button type="submit" class="btn-login">Criar Conta</button>
                 
                 <div class="login-footer">
-                    <a href="#">Esqueceu a senha?</a>
-                    <span>Não tem conta? <a href="#" class="highlight">Cadastre-se</a></span>
+                    <span>Já é membro? <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">Fazer Login</a></span>
+                </div>
+            </form>
+        </div>
+
+        <div id="forgotSection" class="login-card fade-in hidden">
+            <h2>Recuperar <span class="highlight">Acesso</span></h2>
+            <p>Enviaremos um link de recuperação para o seu e-mail.</p>
+
+            <form class="login-form">
+                <div class="input-group">
+                    <label>E-mail de Cadastro</label>
+                    <input type="email" placeholder="seu@email.com" required>
+                </div>
+                <button type="submit" class="btn-login">Enviar Link</button>
+                
+                <div class="login-footer">
+                    <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">Voltar para o Login</a>
                 </div>
             </form>
         </div>
     </main>
+
     <script>
-document.querySelector(".login-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("password").value;
-
-    try {
-        const res = await fetch("http://localhost:3000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ email, senha })
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            alert(data.message);
-            return;
+        // Lógica simples para trocar de tela sem recarregar a página
+        function showSection(sectionId) {
+            // Esconde todas as seções
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('registerSection').classList.add('hidden');
+            document.getElementById('forgotSection').classList.add('hidden');
+            
+            // Mostra a selecionada
+            document.getElementById(sectionId).classList.remove('hidden');
         }
-
-      alert(data.message);
-
-    } catch (err) {
-        alert("Erro ao conectar com servidor");
-    }
-});
-console.log("JS carregou");
-</script>
-
+    </script>
 </body>
 </html>

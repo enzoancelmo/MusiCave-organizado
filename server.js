@@ -1,69 +1,75 @@
+/* ==========================================================================
+   MUSICAVE SERVER - NODE.JS + EXPRESS
+   Motor do TCC: Gerencia a coleção de álbuns e as avaliações.
+   ========================================================================== */
+
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
-const path = require('path'); // <--- ESTA LINHA ESTAVA FALTANDO!
-
 const app = express();
-app.use(express.json());
+const PORT = 3000;
+
+// Configurações de Permissão (CORS) e Limite de Dados (para fotos em Base64)
 app.use(cors());
+app.use(express.json({ limit: '50mb' })); 
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-const SECRET_KEY = "minha_chave_ultra_secreta_123";
+/* BANCO DE DADOS TEMPORÁRIO (MOCK)
+   Os dados ficam salvos aqui enquanto o servidor estiver ligado.
+*/
+let albums_db = [];
 
-// Banco de dados temporário (em memória)
-const usuarios = []; 
+// ==========================================================================
+// ROTAS DA API
+// ==========================================================================
 
-// ROTA PARA SERVIR O HTML (Faz o localhost:3000 abrir o site)
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// 1. [GET] Buscar todos os álbuns
+app.get('/api/albums', (req, res) => {
+    console.log("🔍 [DB] Enviando coleção para o site...");
+    res.status(200).json(albums_db);
 });
 
-// Permite que o servidor use arquivos estáticos da pasta
-app.use(express.static(__dirname));
-
-// ROTA DE CADASTRO
-app.post('/cadastro', async (req, res) => {
-    const { email, senha } = req.body;
-    const usuarioExiste = usuarios.find(u => u.email === email);
+// 2. [POST] Salvar um novo álbum
+app.post('/api/albums', (req, res) => {
+    const newAlbum = req.body;
     
-    if (usuarioExiste) return res.status(400).json({ message: "E-mail já cadastrado!" });
+    if (!newAlbum.name || !newAlbum.artist) {
+        return res.status(400).json({ error: "Nome e Artista são obrigatórios!" });
+    }
 
-    const senhaHash = await bcrypt.hash(senha, 10);
-    usuarios.push({ email, senhaHash });
-    
-    res.status(201).json({ message: "Usuário cadastrado com sucesso!" });
+    console.log(`➕ [DB] Novo álbum cadastrado: ${newAlbum.name}`);
+    albums_db.push(newAlbum);
+    res.status(201).json({ message: "Álbum salvo com sucesso!", album: newAlbum });
 });
 
-// ROTA DE LOGIN
-app.post('/login', async (req, res) => {
-    const { email, senha } = req.body;
-    const usuario = usuarios.find(u => u.email === email);
+// 3. [PUT] Atualizar notas de um álbum (Calcular & Salvar)
+app.put('/api/albums/:id', (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+    const index = albums_db.findIndex(a => a.id === id);
 
-    if (!usuario) return res.status(401).json({ message: "Usuário não encontrado!" });
-
-    const senhaValida = await bcrypt.compare(senha, usuario.senhaHash);
-    if (!senhaValida) return res.status(401).json({ message: "Senha incorreta!" });
-
-    const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
-    res.json({ auth: true, token });
+    if (index !== -1) {
+        albums_db[index] = { ...albums_db[index], ...updatedData };
+        console.log(`💾 [DB] Notas sincronizadas para o ID: ${id}`);
+        return res.status(200).json({ message: "Avaliação atualizada!" });
+    }
+    res.status(404).json({ error: "Álbum não encontrado." });
 });
 
-// MIDDLEWARE DE VERIFICAÇÃO
-function verificarJWT(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader) return res.status(403).json({ message: "Token não fornecido." });
-
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, SECRET_KEY, (err, decoded) => {
-        if (err) return res.status(500).json({ message: "Token inválido ou expirado." });
-        req.userEmail = decoded.email;
-        next();
-    });
-}
-
-// ROTA PROTEGIDA
-app.get('/perfil', verificarJWT, (req, res) => {
-    res.json({ message: `Bem-vindo, ${req.userEmail}!` });
+// 4. [DELETE] Remover álbum
+app.delete('/api/albums/:id', (req, res) => {
+    const { id } = req.params;
+    albums_db = albums_db.filter(a => a.id !== id);
+    console.log(`🗑️ [DB] Álbum removido: ${id}`);
+    res.status(200).json({ message: "Removido!" });
 });
 
-app.listen(3000, () => console.log("Servidor rodando em http://localhost:3000"));  
+// INICIALIZAÇÃO DO SERVIDOR
+app.listen(PORT, () => {
+    console.log(`
+    ====================================================
+    🦇 MUSICAVE SERVER IS RUNNING!
+    🚀 URL: http://localhost:${PORT}
+    📡 Pronto para receber dados do Tiers.html
+    ====================================================
+    `);
+});

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MusiCave | Tiers</title>
+    <title>MusiCave 🦇 - Tiers</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 </head>
-<body class="avaliar-page">
+<body class="login-body">
 
     <header class="header">
         <div class="header-inner">
@@ -27,10 +28,10 @@
     <main class="main-tiers">
         <div id="homeView">
             <section class="glass-card fade-in">
-                <h2 class="section-title">➕ Adicionar Álbum</h2>
+                <h2 class="highlight">➕ Adicionar Álbum</h2>
                 <form id="albumForm">
-                    <div class="form-grid-tiers">
-                        <div class="form-left">
+                    <div class="form-grid">
+                        <div>
                             <div class="input-group">
                                 <label for="albumName">Nome do Álbum</label>
                                 <input type="text" id="albumName" placeholder="Ex: ASTROWORLD">
@@ -39,79 +40,96 @@
                                 <label for="artistName">Artista</label>
                                 <input type="text" id="artistName" placeholder="Ex: Travis Scott">
                             </div>
-                            <div class="upload-wrapper">
-                                <label class="btn-upload" for="coverUpload">Selecionar Capa</label>
-                                <input type="file" id="coverUpload" accept="image/*" style="display: none;">
-                                <button type="button" id="clearCover" class="btn-danger hidden">✕</button>
+                            <div class="input-group">
+                                <label>Capa do Álbum</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <label class="upload-btn" for="coverUpload">Subir capa</label>
+                                    <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+                                    <button type="button" id="clearCover" class="btn-contact hidden" style="min-width: 40px; padding: 5px;">✕</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-right">
-                            <div class="preview-box">
-                                <img id="coverPreview" class="cover-preview hidden" src="" alt="Preview">
-                                <div id="previewPlaceholder">Preview da Capa</div>
-                            </div>
+                        <div>
+                            <img id="coverPreview" class="cover-preview hidden" src="" alt="Preview">
                             <div class="input-group">
                                 <label for="tracklist">Tracklist (uma por linha)</label>
-                                <textarea id="tracklist" placeholder="1. STARGAZING&#10;2. CAROUSEL..."></textarea>
+                                <textarea id="tracklist" placeholder="1. STARGAZING&#10;2. CAROUSEL"></textarea>
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="pill-home" style="width: 100%; justify-content: center;">➕ Adicionar à Coleção</button>
+                    <button type="submit" class="btn-login">➕ Adicionar à Coleção</button>
                 </form>
             </section>
 
-            <section class="tier-section fade-in">
-                <h2 class="main-title" style="font-size: 2rem; text-align: left; margin: 4vh 0 2vh;">Sua Coleção</h2>
-                <div id="tierList" class="tier-grid-container"></div>
+            <section class="fade-in">
+                <h2 class="highlight" style="margin-bottom: 20px;">Sua Coleção</h2>
+                <div id="tierList"></div>
             </section>
         </div>
 
         <div id="evalView" class="hidden">
-            <button id="backBtn" class="btn-back">← Voltar para a Lista</button>
+            <button id="backBtn" class="btn-contact" style="min-width: 120px; margin-bottom: 20px;">← Voltar</button>
             <div class="glass-card fade-in">
-                <div class="eval-header-top">
-                    <img id="evalCover" class="eval-cover-img" src="" alt="">
-                    <div id="evalCoverPlaceholder" class="eval-cover-img hidden" style="background: #111; display: flex; align-items: center; justify-content: center;">🎵</div>
-                    <div class="eval-info">
+                <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 30px;">
+                    <img id="evalCover" class="album-cover" src="" alt="" style="width: 100px; height: 100px; border-radius: 10px; border: 2px solid #b112f1;">
+                    <div>
                         <h2 id="evalAlbumName" class="highlight"></h2>
-                        <p id="evalArtistName"></p>
+                        <p id="evalArtistName" style="color: #888;"></p>
                     </div>
                 </div>
 
-                <div class="slider-container">
-                    <div class="slider-header">
-                        <span>Nota do Conceito</span>
-                        <span id="conceptValue" class="highlight">5.0</span>
+                <div class="input-group">
+                    <label>Nota do Conceito <span class="highlight">(×1)</span></label>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <input type="range" id="conceptSlider" min="0" max="10" step="0.5" value="5">
+                        <span class="slider-value" id="conceptValue">5.0</span>
                     </div>
-                    <input type="range" id="conceptSlider" min="0" max="10" step="0.5" value="5">
                 </div>
 
-                <div id="tracksEvaluation"></div>
+                <div id="tracksEvaluation" style="margin-top: 30px;"></div>
 
-                <div class="btn-group-eval">
-                    <button id="saveNotesBtn" class="btn-secondary">💾 Salvar</button>
-                    <button id="calculateBtn" class="btn-nav" style="flex: 2;">🧮 Calcular Nota</button>
-                    <button id="exportPdfBtn" class="btn-secondary">📄 PDF</button>
+                <div style="display: flex; gap: 15px; margin-top: 40px;">
+                    <button id="calculateBtn" class="btn-login">🧮 Calcular & Salvar</button>
+                    <button id="exportPdfBtn" class="btn-contact" style="background: #222;">📄 Gerar PDF</button>
                 </div>
             </div>
         </div>
     </main>
+    <div id="storyContainer" class="hidden" style="
+    width: 360px; height: 640px; /* Proporção 9:16 (Story) */
+    background: #0d0a14 url('bg.mp4') center/cover; /* Usando o fundo escuro */
+    font-family: 'Inter', sans-serif;
+    color: white;
+    position: fixed; top: -1000px; left: -1000px; /* Tira da tela */
+    display: flex; flex-direction: column;
+    padding: 30px; border-radius: 15px; box-shadow: 0 0 50px rgba(177, 18, 241, 0.4);">
+    
+    <div style="background: rgba(13, 10, 20, 0.8); backdrop-filter: blur(5px); padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 25px;">
+        <h1 style="color: #b112f1; text-align: center; font-size: 1.8rem; font-weight: 800; margin: 0; text-shadow: 0 0 10px rgba(177, 18, 241, 0.6);">MUSICAVE REVIEW</h1>
+    </div>
 
-    <div id="deleteModal" class="modal-overlay hidden">
-        <div class="login-card" style="max-width: 400px; padding: 2rem;">
-            <h3>Remover álbum?</h3>
-            <p style="margin: 1rem 0;">Isso apagará todas as notas deste álbum permanentemente.</p>
-            <div style="display: flex; gap: 1rem; justify-content: center;">
-                <button id="cancelDelete" class="btn-nav" style="background: #222;">Cancelar</button>
-                <button id="confirmDelete" class="btn-nav" style="background: #ff4444;">Sim, Remover</button>
-            </div>
+    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 25px;">
+        <img id="storyCover" src="" style="width: 80px; height: 80px; border-radius: 10px; border: 2px solid #b112f1; object-fit: cover;">
+        <div>
+            <h2 id="storyAlbumName" style="font-weight: 800; margin: 0; font-size: 1.2rem;"></h2>
+            <p id="storyArtistName" style="color: #888; margin: 5px 0 0; font-size: 0.9rem;"></p>
         </div>
     </div>
 
-    <div id="toast" class="toast hidden">
-        <div id="toastTitle" style="font-weight: bold; color: #b112f1;"></div>
-        <div id="toastMessage"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 25px;">
+        <div>
+            <span style="font-weight: 800; font-size: 1.6rem; color: white;" id="storyScore"></span>
+            <span style="color: #555; font-size: 0.8rem; display: block; margin-top: -5px;">NOTA FINAL</span>
+        </div>
+        <div id="storyTierBadge" style="font-size: 1.8rem;"></div>
     </div>
+
+    <h3 style="color: #b112f1; font-size: 1rem; margin: 0 0 10px;">🏆 TOP FAIXAS</h3>
+    <div id="storyFaixas" style="color: #ddd; font-size: 0.85rem; line-height: 1.5; flex-grow: 1;">
+    </div>
+
+    <div style="font-size: 0.7rem; color: #444; text-align: center; margin-top: auto;">@MusiCaveReview 🦇</div>
+</div>
 
     <script src="script.js"></script>
 </body>
