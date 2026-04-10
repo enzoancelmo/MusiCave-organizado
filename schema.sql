@@ -44,3 +44,19 @@ CREATE TABLE IF NOT EXISTS playlist_tracks (
   added_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (playlist_id, track_id)
 );
+-- Adicionando suporte para avaliações e capas no banco, gobbo, ou xavier, quando forem fazer prestem atenção e testem, voces subiram no git sem tabela de nota nem tabela de tier, como um sistema de tier funciona sem a tabela de tier? é um milagre?
+ALTER TABLE albums ADD COLUMN IF NOT EXISTS cover TEXT;
+ALTER TABLE albums ADD COLUMN IF NOT EXISTS tier_score DECIMAL(4,2);
+ALTER TABLE albums ADD COLUMN IF NOT EXISTS tier CHAR(1);
+
+-- Tabela para salvar as notas detalhadas de cada faixa
+CREATE TABLE IF NOT EXISTS track_ratings (
+    track_id BIGINT REFERENCES tracks(id) ON DELETE CASCADE,
+    letra DECIMAL(3,1),
+    beat DECIMAL(3,1),
+    flow DECIMAL(3,1),
+    refrao DECIMAL(3,1),
+    feat DECIMAL(3,1),
+    adlib DECIMAL(3,1),
+    PRIMARY KEY (track_id)
+);
