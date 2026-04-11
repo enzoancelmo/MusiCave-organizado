@@ -20,6 +20,8 @@
     </header>
 
     <main class="login-container">
+
+        <!-- LOGIN -->
         <div id="loginSection" class="login-card fade-in">
             <h2>Bem-vindo ao <span class="highlight">MusiCave</span></h2>
             <p>Acesse sua conta para continuar.</p>
@@ -27,22 +29,27 @@
             <form class="login-form">
                 <div class="input-group">
                     <label>E-mail</label>
-                    <input type="email" placeholder="seu@email.com" required>
+                    <input type="email" name="email" placeholder="seu@email.com" required>
                 </div>
                 <div class="input-group">
                     <label>Senha</label>
-                    <input type="password" placeholder="••••••••" required>
+                    <input type="password" name="senha" placeholder="••••••••" required>
                 </div>
                 <button type="submit" class="btn-login">Entrar</button>
-                <br>
+
                 <div class="login-footer">
                     <a href="javascript:void(0)" onclick="showSection('forgotSection')">Esqueceu a senha?</a>
                     <br>
-                    <span>Não tem conta? <a href="javascript:void(0)" class="highlight" onclick="showSection('registerSection')">Cadastre-se</a></span>
+                    <span>Não tem conta? 
+                        <a href="javascript:void(0)" class="highlight" onclick="showSection('registerSection')">
+                            Cadastre-se
+                        </a>
+                    </span>
                 </div>
             </form>
         </div>
 
+        <!-- CADASTRO -->
         <div id="registerSection" class="login-card fade-in hidden">
             <h2>Criar <span class="highlight">Conta</span></h2>
             <p>Junte-se à caverna musical.</p>
@@ -50,24 +57,29 @@
             <form class="login-form">
                 <div class="input-group">
                     <label>Nome Completo</label>
-                    <input type="text" placeholder="Como quer ser chamado?" required>
+                    <input type="text" name="username" placeholder="Como quer ser chamado?" required>
                 </div>
                 <div class="input-group">
                     <label>E-mail</label>
-                    <input type="email" placeholder="seu@email.com" required>
+                    <input type="email" name="email" placeholder="seu@email.com" required>
                 </div>
                 <div class="input-group">
                     <label>Senha</label>
-                    <input type="password" placeholder="Mínimo 8 caracteres" required>
+                    <input type="password" name="senha" placeholder="Mínimo 8 caracteres" required>
                 </div>
                 <button type="submit" class="btn-login">Criar Conta</button>
                 
                 <div class="login-footer">
-                    <span>Já é membro? <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">Fazer Login</a></span>
+                    <span>Já é membro? 
+                        <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">
+                            Fazer Login
+                        </a>
+                    </span>
                 </div>
             </form>
         </div>
 
+        <!-- RECUPERAÇÃO -->
         <div id="forgotSection" class="login-card fade-in hidden">
             <h2>Recuperar <span class="highlight">Acesso</span></h2>
             <p>Enviaremos um link de recuperação para o seu e-mail.</p>
@@ -80,23 +92,103 @@
                 <button type="submit" class="btn-login">Enviar Link</button>
                 
                 <div class="login-footer">
-                    <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">Voltar para o Login</a>
+                    <a href="javascript:void(0)" class="highlight" onclick="showSection('loginSection')">
+                        Voltar para o Login
+                    </a>
                 </div>
             </form>
         </div>
+
     </main>
 
     <script>
-        // Lógica simples para trocar de tela sem recarregar a página
+        const API = "http://localhost:3001";
+
         function showSection(sectionId) {
-            // Esconde todas as seções
             document.getElementById('loginSection').classList.add('hidden');
             document.getElementById('registerSection').classList.add('hidden');
             document.getElementById('forgotSection').classList.add('hidden');
-            
-            // Mostra a selecionada
             document.getElementById(sectionId).classList.remove('hidden');
         }
+
+        // LOGIN
+        async function parseResponse(res) {
+            let data;
+
+            try {
+                data = await res.json();
+            } catch (error) {
+                data = { message: "Resposta inválida do servidor." };
+            }
+
+            if (!res.ok) {
+                throw new Error(data.message || "Erro na requisição.");
+            }
+
+            return data;
+        }
+
+        document.querySelector("#loginSection form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const email = e.target.email.value;
+            const senha = e.target.senha.value;
+
+            try {
+                const res = await fetch(API + "/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                const data = await parseResponse(res);
+                alert(data.message);
+
+                if (data.user?.name) {
+                    localStorage.setItem("musicaveUser", JSON.stringify(data.user));
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Erro ao conectar com o servidor");
+            }
+        });
+
+        // CADASTRO
+        document.querySelector("#registerSection form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const username = e.target.username.value;
+            const email = e.target.email.value;
+            const senha = e.target.senha.value;
+
+            if (senha.length < 8) {
+                alert("A senha precisa ter pelo menos 8 caracteres.");
+                return;
+            }
+
+            try {
+                const res = await fetch(API + "/cadastro", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, email, senha })
+                });
+
+                const data = await parseResponse(res);
+                alert(data.message);
+                e.target.reset();
+                showSection('loginSection');
+
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Erro ao conectar com o servidor");
+            }
+        });
     </script>
+
 </body>
 </html>
