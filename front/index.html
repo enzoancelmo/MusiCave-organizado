@@ -1,55 +1,299 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>707 • MusiCave</title>
-  <link rel="stylesheet" href="style.css" />
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MusiCave 🦇</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
 </head>
+
 <body>
 
-  <header class="header">
-    <div class="header-inner">
-      <div class="logo">MusiCave</div>
+    <header class="header">
 
-      <nav class="menu">
-  <a class="active" href="#">Início</a>
-  <a href="#">Sobre</a>
-  <a href="#">Tiers</a>
-  <a href="#">Contato</a>
-</nav>
+        <div class="logo-container">
 
-      <div class="header-actions">
-        <button class="btn ghost" type="button">Entrar</button>
-      </div>
-    </div>
-  </header>
+            <h1>MusiCave <span>🦇</span></h1>
 
-  <main class="main">
-    <section class="hero">
-      <div class="big404">
-        <div class="n left">7</div>
+            <p>Crie sua Tierlist, avalie seus álbuns</p>
 
-        <!-- BONECO NO MEIO (vídeo) -->
-        <div class="character">
-          <video class="mascot-video" autoplay muted loop playsinline preload="auto">
-            <source src="bg.mp4" type="video/mp4" />
-          </video>
         </div>
 
-        <div class="n right">7</div>
-      </div>
+    </header>
 
-      <h1>MUSICAVE</h1>
-      <p class="sub">Verifique o endereço ou volte para o início.</p>
 
-      <button class="pill" id="goHome" type="button">
-        <span class="pill-dot"></span>
-        Voltar ao início
-      </button>
-    </section>
-  </main>
 
-  <script src="script.js"></script>
+    <main class="container">
+
+        <div id="homeView" class="view-section">
+
+            <section class="glass-card form-section fade-in">
+
+                <div class="form-header">
+
+                    <span class="icon-plus">➕</span>
+
+                    <h2 class="form-title">Adicionar Álbum</h2>
+
+                </div>
+
+               
+
+                <form id="albumForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-left">
+
+                            <div class="form-group">
+
+                                <label for="albumName">Nome do Álbum</label>
+
+                                <input type="text" id="albumName" placeholder="Ex: ASTROWORLD" required>
+
+                            </div>
+
+                           
+
+                            <div class="form-group">
+
+                                <label for="artistName">Artista</label>
+
+                                <input type="text" id="artistName" placeholder="Ex: Travis Scott" required>
+
+                            </div>
+
+
+
+                            <div class="form-group">
+
+                                <label>Capa do Álbum</label>
+
+                                <div class="upload-wrapper">
+
+                                    <label class="btn-upload" for="coverUpload">Subir capa</label>
+
+                                    <input type="file" id="coverUpload" accept="image/*" style="display: none;">
+
+                                    <button type="button" id="clearCover" class="btn-clear hidden">✕</button>
+
+                                </div>
+
+                                <div class="preview-container">
+
+                                    <img id="coverPreview" class="cover-preview hidden" src="" alt="Preview">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="form-right">
+
+                            <div class="form-group">
+
+                                <label for="tracklist">Tracklist (uma faixa por linha)</label>
+
+                                <textarea id="tracklist" placeholder="Stargazing&#10;Carousel&#10;Sicko Mode" required></textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                   
+
+                    <button type="submit" class="btn btn-primary btn-full">
+
+                        <span class="btn-content">➕ Adicionar Álbum</span>
+
+                    </button>
+
+                </form>
+
+            </section>
+
+
+
+            <section class="tier-section fade-in">
+
+                <h2 class="tier-title">Sua Coleção</h2>
+
+                <div id="tierList" class="tier-list-container">
+
+                    </div>
+
+            </section>
+
+        </div>
+
+
+
+        <div id="evalView" class="view-section hidden">
+
+            <div class="eval-nav">
+
+                <button id="backBtn" class="btn btn-back">
+
+                    <span class="back-icon">←</span> Voltar para Coleção
+
+                </button>
+
+            </div>
+
+
+
+            <div class="glass-card evaluation-card fade-in">
+
+                <div class="eval-header">
+
+                    <div class="eval-cover-wrapper">
+
+                        <img id="evalCover" class="album-cover-eval" src="" alt="">
+
+                        <div id="evalCoverPlaceholder" class="album-cover-placeholder-eval hidden">🎵</div>
+
+                    </div>
+
+                    <div class="eval-info">
+
+                        <h2 id="evalAlbumName"></h2>
+
+                        <p id="evalArtistName"></p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="eval-section">
+
+                    <div class="section-title">
+
+                        <h3>Conceito</h3>
+
+                        <p>A experiência geral e coesão do álbum</p>
+
+                    </div>
+
+                    <div class="slider-group concept-slider">
+
+                        <div class="slider-header">
+
+                            <span class="slider-label">Nota do Conceito</span>
+
+                            <span id="conceptValue" class="slider-value">5.0</span>
+
+                        </div>
+
+                        <input type="range" id="conceptSlider" min="0" max="10" step="0.5" value="5">
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="section-title">
+
+                    <h3>Faixas</h3>
+
+                    <p>Avalie cada música individualmente</p>
+
+                </div>
+
+                <div id="tracksEvaluation" class="tracks-grid">
+
+                    </div>
+
+
+
+                <div class="eval-actions">
+
+                    <div class="actions-left">
+
+                        <button id="saveNotesBtn" class="btn btn-outline">💾 Salvar Rascunho</button>
+
+                        <button id="calculateBtn" class="btn btn-primary">🧮 Calcular Nota</button>
+
+                    </div>
+
+                    <div class="actions-right">
+
+                        <button id="exportPdfBtn" class="btn btn-outline pdf-btn">📄 Gerar PDF Review</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <div id="deleteModal" class="modal-overlay hidden">
+
+        <div class="modal glass-card">
+
+            <h3>Remover álbum?</h3>
+
+            <p>Esta ação não pode ser desfeita.</p>
+
+            <div class="modal-buttons">
+
+                <button id="cancelDelete" class="btn btn-outline">Cancelar</button>
+
+                <button id="confirmDelete" class="btn btn-danger">Remover Permanentemente</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="toast" class="toast hidden">
+
+        <div class="toast-content">
+
+            <span id="toastTitle" class="toast-title"></span>
+
+            <span id="toastMessage" class="toast-message"></span>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="server.js"></script>
+
 </body>
+
 </html>

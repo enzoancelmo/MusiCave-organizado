@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16
+    container_name: musicave-db
+    environment:
+      POSTGRES_DB: musicave
+      POSTGRES_USER: musicave
+      POSTGRES_PASSWORD: musicave
+    ports:
+      - "5432:5432"
+    volumes:
+      - musicave_pgdata:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    container_name: musicave-adminer
+    ports:
+      - "8080:8080"
+
+volumes:
+  musicave_pgdata:
