@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const fs = require("fs/promises");
 const path = require("path");
+const jwt = require("jsonwebtoken");
+
+const SECRET_KEY = "3981289d18s98y2e98y2e9y19ye3y93y7d"; // Use algo complexo
 
 const app = express();
 const PORT = 3001;
@@ -176,15 +179,27 @@ app.post("/login", async (req, res) => {
     if (!senhaValida) {
       return res.status(400).json({ message: "E-mail ou senha invalidos" });
     }
+    if (!senhaValida) {
+      return res.status(400).json({ message: "E-mail ou senha invalidos" });
+    }
+
+    // --- NOVO: GERANDO O TOKEN JWT ---
+    const token = jwt.sign(
+      { id: user.id, email: user.email }, // Dados que vão dentro do token
+      SECRET_KEY, 
+      { expiresIn: '24h' } // Token expira em 1 dia
+    );
 
     res.json({
       message: "Login realizado com sucesso!",
+      token: token, // Envia o token para o front-end
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
       },
     });
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Erro ao tentar logar" });
