@@ -1,4 +1,6 @@
-/* ==========================================================================
+/* 
+npm i pg cors  express  bcrypt usaaaa issoooo
+==========================================================================
    MUSICAVE SERVER - NODE.JS + EXPRESS (DATABASE INTEGRATED)
    Motor do TCC: Gerencia usuários, coleção de álbuns e avaliações no Docker.
    ========================================================================== */
