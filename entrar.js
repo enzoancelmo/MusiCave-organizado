@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const fs = require("fs/promises");
 const path = require("path");
-const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = "3981289d18s98y2e98y2e9y19ye3y93y7d"; // Use algo complexo
 
@@ -61,9 +60,14 @@ async function iniciarAutenticacao() {
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
+        recovery_token TEXT,
+        recovery_requested_at TIMESTAMPTZ,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )
     `);
+
+    await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS recovery_token TEXT");
+    await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS recovery_requested_at TIMESTAMPTZ");
 
     console.log("Autenticacao conectada ao PostgreSQL.");
   } catch (error) {
@@ -149,7 +153,7 @@ app.post("/login", async (req, res) => {
   const { email, senha } = req.body;
 
   if (!email || !senha) {
-    return res.status(400).json({ message: "E-mail e senha são obrigatórios" });
+    return res.status(400).json({ message: "E-mail e senha sao obrigatorios" });
   }
 
   try {
@@ -183,13 +187,8 @@ app.post("/login", async (req, res) => {
       return res.status(400).json({ message: "E-mail ou senha invalidos" });
     }
 
-    // --- NOVO: GERANDO O TOKEN JWT ---
-    const token = jwt.sign(
-      { id: user.id, email: user.email }, // Dados que vão dentro do token
-      SECRET_KEY, 
-      { expiresIn: '24h' } // Token expira em 1 dia
-    );
-
+    // --- NOVO: GERANDO O TOKEN ---
+    const token = Buffer.from(`${user.id}:${user.email}:${SECRET_KEY}`).toString("base64");
     res.json({
       message: "Login realizado com sucesso!",
       token: token, // Envia o token para o front-end
@@ -205,6 +204,8 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Erro ao tentar logar" });
   }
 });
+
+
 
 iniciarAutenticacao().then(() => {
   app.listen(PORT, () => {
