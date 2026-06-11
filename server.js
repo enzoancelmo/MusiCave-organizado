@@ -37,55 +37,270 @@ pool.query('SELECT NOW()', (err, res) => {
 
 // 1. [GET] Buscar todos os álbuns (Busca no Banco Real)
 app.get('/api/albums', async (req, res) => {
+
     try {
-        const result = await pool.query('SELECT * FROM albums ORDER BY created_at DESC');
-        console.log("🔍 [DB] Enviando coleção do banco para o site...");
+
+        const result = await pool.query(`
+            SELECT
+                a.id,
+                a.title AS name,
+                ar.name AS artist,
+                a.cover,
+                a.tier_score AS "tierScore",
+                a.tier,
+                a.concept_rating AS "conceptRating"
+            FROM albums a
+            JOIN artists ar
+                ON ar.id = a.artist_id
+            ORDER BY a.created_at DESC
+        `);
+
         res.status(200).json(result.rows);
+
     } catch (err) {
-        res.status(500).json({ error: err.message });
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
     }
 });
 
 // 2. [POST] Salvar um novo álbum
 app.post('/api/albums', async (req, res) => {
-    const { id, name, artist, cover, tracks } = req.body;
-    
-    if (!name || !artist) {
-        return res.status(400).json({ error: "Nome e Artista são obrigatórios!" });
-    }
+
+    const {
+        name,
+        artist,
+        cover,
+        tracks,
+        conceptRating
+    } = req.body;
+
+    const client = await pool.connect();
 
     try {
-        // Insere o álbum no banco (usando as colunas do schema dos seus parceiros)
-        const query = 'INSERT INTO albums (id, title, artist_id, cover, tracks_data) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        // Nota: 'tracks_data' é onde salvaremos o JSON das faixas por enquanto
-        const values = [id, name, artist, cover, JSON.stringify(tracks)];
-        
-        await pool.query(query, values);
-        console.log(`➕ [DB] Novo álbum imortalizado: ${name}`);
-        res.status(201).json({ message: "Salvo no Banco!", album: name });
+
+        await client.query('BEGIN');
+
+        let artistResult = await client.query(
+            'SELECT id FROM artists WHERE name = $1',
+            [artist]
+        );
+
+        let artistId;
+
+        if (artistResult.rows.length === 0) {
+
+            artistResult = await client.query(
+                `
+                INSERT INTO artists(name)
+                VALUES ($1)
+                RETURNING id
+                `,
+                [artist]
+            );
+
+            artistId = artistResult.rows[0].id;
+
+        } else {
+
+            artistId = artistResult.rows[0].id;
+        }
+
+        const albumResult = await client.query(
+            `
+            INSERT INTO albums
+            (
+                artist_id,
+                title,
+                cover,
+                concept_rating
+            )
+            VALUES ($1,$2,$3,$4)
+            RETURNING id
+            `,
+            [
+                artistId,
+                name,
+                cover,
+                conceptRating || 5
+            ]
+        );
+
+        const albumId = albumResult.rows[0].id;
+
+        for (const track of tracks) {
+
+            const trackResult = await client.query(
+                `
+                INSERT INTO tracks
+                (
+                    album_id,
+                    title
+                )
+                VALUES ($1,$2)
+                RETURNING id
+                `,
+                [
+                    albumId,
+                    track.name
+                ]
+            );
+
+            const trackId = trackResult.rows[0].id;
+
+            await client.query(
+                `
+                INSERT INTO track_ratings
+                (
+                    track_id,
+                    letra,
+                    beat,
+                    flow,
+                    refrao,
+                    feat,
+                    adlib
+                )
+                VALUES ($1,$2,$3,$4,$5,$6,$7)
+                `,
+                [
+                    trackId,
+                    track.ratings.letra,
+                    track.ratings.beat,
+                    track.ratings.flow,
+                    track.ratings.refrao,
+                    track.ratings.feat,
+                    track.ratings.adlib
+                ]
+            );
+        }
+
+        await client.query('COMMIT');
+
+        res.status(201).json({
+            success: true,
+            albumId
+        });
+
     } catch (err) {
+
+        await client.query('ROLLBACK');
+
         console.error(err);
-        res.status(500).json({ error: "Erro ao salvar no banco!" });
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    } finally {
+
+        client.release();
     }
 });
 
 // 3. [PUT] Atualizar notas de um álbum (Calcular & Salvar)
 app.put('/api/albums/:id', async (req, res) => {
+
     const { id } = req.params;
-    const { tierScore, tier, tracks, conceptRating } = req.body;
+
+    const {
+        tierScore,
+        tier,
+        conceptRating,
+        tracks
+    } = req.body;
+
+    const client = await pool.connect();
 
     try {
-        const query = `
-            UPDATE albums 
-            SET tier_score = $1, tier = $2, tracks_data = $3, concept_rating = $4 
-            WHERE id = $5`;
-        const values = [tierScore, tier, JSON.stringify(tracks), conceptRating, id];
-        
-        await pool.query(query, values);
-        console.log(`💾 [DB] Notas sincronizadas no banco para o ID: ${id}`);
-        res.status(200).json({ message: "Avaliação salva permanentemente!" });
+
+        await client.query('BEGIN');
+
+        await client.query(
+            `
+            UPDATE albums
+            SET
+                tier_score = $1,
+                tier = $2,
+                concept_rating = $3
+            WHERE id = $4
+            `,
+            [
+                tierScore,
+                tier,
+                conceptRating,
+                id
+            ]
+        );
+
+        for (const track of tracks) {
+
+            const trackResult = await client.query(
+                `
+                SELECT id
+                FROM tracks
+                WHERE album_id = $1
+                AND title = $2
+                `,
+                [
+                    id,
+                    track.name
+                ]
+            );
+
+            if (trackResult.rows.length === 0) {
+                continue;
+            }
+
+            const trackId = trackResult.rows[0].id;
+
+            await client.query(
+                `
+                UPDATE track_ratings
+                SET
+                    letra = $1,
+                    beat = $2,
+                    flow = $3,
+                    refrao = $4,
+                    feat = $5,
+                    adlib = $6
+                WHERE track_id = $7
+                `,
+                [
+                    track.ratings.letra,
+                    track.ratings.beat,
+                    track.ratings.flow,
+                    track.ratings.refrao,
+                    track.ratings.feat,
+                    track.ratings.adlib,
+                    trackId
+                ]
+            );
+        }
+
+        await client.query('COMMIT');
+
+        console.log(`💾 [DB] Álbum ${id} atualizado`);
+
+        res.status(200).json({
+            message: "Avaliação salva permanentemente!"
+        });
+
     } catch (err) {
-        res.status(500).json({ error: "Erro ao atualizar banco." });
+
+        await client.query('ROLLBACK');
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    } finally {
+
+        client.release();
     }
 });
 

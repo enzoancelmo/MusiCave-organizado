@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS playlist_tracks (
 ALTER TABLE albums ADD COLUMN IF NOT EXISTS cover TEXT;
 ALTER TABLE albums ADD COLUMN IF NOT EXISTS tier_score DECIMAL(4,2);
 ALTER TABLE albums ADD COLUMN IF NOT EXISTS tier CHAR(1);
-
+ALTER TABLE albums ADD COLUMN IF NOT EXISTS concept_rating DECIMAL(3,1);
 -- Tabela para salvar as notas detalhadas de cada faixa
 CREATE TABLE IF NOT EXISTS track_ratings (
     track_id BIGINT REFERENCES tracks(id) ON DELETE CASCADE,
