@@ -1,6 +1,16 @@
 {
+  "name": "musicave",
+  "version": "1.0.0",
+  "description": "Sistema web para cadastro, avaliacao e classificacao de albuns musicais.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "check": "node --check backend/server.js && node --check frontend/js/script.js"
+  },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.13.1"
   }
 }

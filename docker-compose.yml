@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - musicave_pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
 
   adminer:
     image: adminer

@@ -1,0 +1,613 @@
+/* ==========================================================================
+   1. CONFIGURAÇÕES GERAIS (RESET E BASE)
+   Define o comportamento padrão de todo o site.
+   ========================================================================== */
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+html, body { 
+    height: 100%; 
+    font-size: 16px; 
+    background: #000;
+    color: #fff;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden; 
+}
+
+/* Destaque roxo com brilho sutil calibrado */
+.highlight { 
+    color: #b112f1; 
+    text-shadow: 0 0 10px rgba(177, 18, 241, 0.4); 
+}
+
+/* Classe para esconder elementos (Utilizada para alternar telas no Tiers e Login) */
+.hidden { 
+    display: none !important; 
+}
+
+/* Animação suave de entrada */
+.fade-in { 
+    animation: fadeIn 0.4s ease-out; 
+}
+
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
+}
+
+
+/* ==========================================================================
+   2. HEADER (MENU SUPERIOR FIXO - 10vh)
+   Barra de navegação universal do MusiCave.
+   ========================================================================== */
+
+.header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.95);
+    border-bottom: 0.1rem solid #222;
+    z-index: 1000;
+}
+
+.header-inner {
+    width: 92%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo { 
+    font-weight: 900; 
+    font-size: 1.25rem; 
+    letter-spacing: 0.1rem; 
+}
+
+.menu { 
+    display: flex; 
+    gap: 1.5rem; 
+}
+
+.menu a {
+    text-decoration: none;
+    color: #bbb;
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: 0.3s;
+}
+
+.menu a.active, .menu a:hover { 
+    color: #b112f1; 
+    background: rgba(177, 18, 241, 0.1); 
+    text-shadow: 0 0 8px rgba(177, 18, 241, 0.3);
+}
+
+.btn-nav {
+    background: #b112f1;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(177, 18, 241, 0.3);
+}
+
+
+/* ==========================================================================
+   3. PÁGINA INICIAL (INDEX.HTML)
+   ========================================================================== */
+
+.main { 
+    height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: radial-gradient(circle at center, #1a0225 0%, #000 75%); 
+}
+
+.hero { 
+    width: 90%; 
+    text-align: center; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 2vh; 
+}
+
+.character { 
+    width: 40vh; 
+    max-width: 300px; 
+    aspect-ratio: 1/1; 
+    border-radius: 50%; 
+    border: 0.2rem solid #b112f1; 
+    overflow: hidden; 
+    box-shadow: 0 0 2.5rem rgba(177, 18, 241, 0.3); 
+}
+
+.mascot-video { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    transform: scale(1.5); 
+    animation: floaty 3s ease-in-out infinite; 
+}
+
+@keyframes floaty { 
+    0%, 100% { transform: translateY(0.5vh) scale(1.5); } 
+    50% { transform: translateY(-1vh) scale(1.5); } 
+}
+
+.main-title { 
+    font-size: 3.5rem; 
+    font-weight: 900; 
+    text-shadow: 0 0 15px rgba(177, 18, 241, 0.4); 
+}
+
+.pill-home { 
+    margin-top: 2vh; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.8rem; 
+    padding: 1rem 3rem; 
+    border-radius: 0.75rem; 
+    background: #b112f1; 
+    color: #fff; 
+    font-weight: 900; 
+    text-transform: uppercase; 
+    text-decoration: none; 
+    transition: 0.3s; 
+    box-shadow: 0 0 15px rgba(177, 18, 241, 0.4); 
+}
+
+
+/* ==========================================================================
+   4. PÁGINA SOBRE (SOBRE.HTML) - CORREÇÃO DE CENTRALIZAÇÃO
+   ========================================================================== */
+
+.sobre-page { 
+    padding-top: 15vh; 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+}
+
+.team-grid { 
+    display: flex; 
+    justify-content: center; 
+    gap: 1.5%; 
+    margin-bottom: 6vh; 
+    flex-wrap: wrap; 
+}
+/* Estilo da introdução da seção de equipe (Texto acima dos cards) */
+.team-intro { 
+    text-align: center;      /* Garante a centralização horizontal de todo o bloco */
+    margin-bottom: 5vh;      /* Espaço entre o texto e o início da grade de cards */
+    width: 100%;             /* Garante que ocupe a largura total para alinhar pelo meio */
+}
+
+/* Título principal da seção Sobre */
+.team-intro h1 { 
+    font-size: 3.5rem;       /* Tamanho grande e impactante */
+    font-weight: 900; 
+    margin-bottom: 1vh;      /* Pequeno espaço para o parágrafo abaixo */
+    text-shadow: 0 0 15px rgba(177, 18, 241, 0.4); /* Brilho roxo sutil no título */
+}
+
+/* Subtítulo / Descrição da introdução */
+.team-intro p { 
+    font-size: 1.1rem; 
+    color: #bbb;             /* Tom de cinza claro para não brigar com o título */
+    max-width: 800px;        /* Limita a largura para o texto não ficar esticado demais */
+    margin: 0 auto;          /* Centraliza o bloco de texto horizontalmente */
+    line-height: 1.5;        /* Melhora a leitura do texto */
+}
+
+.member-card { 
+    background: rgba(13, 13, 13, 0.8); 
+    border: 0.1rem solid #222; 
+    padding: 3vh 1.5%; 
+    border-radius: 1.25rem; 
+    
+    /* Centralização dos itens interna */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    text-align: center; 
+    
+    flex: 1; 
+    min-width: 250px; 
+    max-width: 300px; 
+    transition: 0.3s; 
+}
+
+.member-card:hover { 
+    border-color: #b112f1; 
+    transform: translateY(-1vh); 
+    box-shadow: 0 0 20px rgba(177, 18, 241, 0.3); 
+}
+
+.member-img img { 
+    width: 8rem; 
+    height: 8rem; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 0.2rem solid #b112f1; 
+    margin-bottom: 2vh; 
+}
+
+.member-card h3 { 
+    font-size: 1.25rem; 
+    margin-bottom: 0.5vh; 
+    font-weight: 800; 
+}
+
+.role { 
+    color: #b112f1; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    font-size: 0.8rem; 
+    margin-bottom: 1.5vh;
+}
+
+.member-card p { 
+    font-size: 0.9rem; 
+    color: #888; 
+    line-height: 1.4; 
+    width: 100%;
+}
+
+.contact-buttons { 
+    display: flex; 
+    justify-content: center; 
+    gap: 1.5rem; 
+    width: 100%; 
+    margin-top: 2vh; 
+    padding-bottom: 5vh;
+}
+
+.btn-contact { 
+    background: #b112f1; 
+    color: #fff; 
+    padding: 1rem 2.5rem; 
+    border-radius: 0.75rem; 
+    text-decoration: none; 
+    font-weight: 900; 
+    min-width: 280px; 
+    text-align: center; 
+    text-transform: uppercase; 
+    box-shadow: 0 0 15px rgba(177, 18, 241, 0.3); 
+}
+
+
+/* ==========================================================================
+   5. PÁGINA DE ACESSO (ENTRAR.HTML)
+   ========================================================================== */
+
+.login-body { 
+    background: radial-gradient(circle at top right, #1a0225 0%, #000 60%); 
+    min-height: 100vh; 
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container { 
+    flex: 1;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 5vh 5%;
+}
+
+.login-card { 
+    background: rgba(13, 13, 13, 0.8); 
+    backdrop-filter: blur(1rem); 
+    border: 0.1rem solid #222; 
+    padding: 4vh 3rem; 
+    border-radius: 1.25rem; 
+    width: 95%; 
+    max-width: 450px; 
+    text-align: center; 
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.6); 
+}
+
+/* Container pai do formulário: Alinha tudo à esquerda dentro dele */
+.login-form { 
+    text-align: left; 
+    margin-top: 3vh; /* Dá um espaço entre o título "Bem-vindo" e os campos */
+}
+
+/* Agrupamento: Garante que o label (E-MAIL/SENHA) fique em cima do input */
+.login-form .input-group { 
+    margin-bottom: 2.5vh; 
+    width: 100%;
+}
+
+/* Rótulos (E-MAIL / SENHA): Pequenos, negrito e em cima da caixa */
+.login-form label { 
+    display: block; 
+    font-size: 0.75rem; 
+    color: #666; 
+    font-weight: 800; 
+    text-transform: uppercase; 
+    margin-bottom: 0.5rem; 
+}
+
+/* Caixas de Entrada: Ocupam 100% da largura e alinham o texto digitado à esquerda */
+.login-form input { 
+    text-align: left; 
+    width: 100%; 
+    padding: 0.8rem 1rem; 
+    background: #0a0a0a; 
+    border: 0.1rem solid #333; 
+    border-radius: 0.6rem; 
+    color: #fff; 
+    outline: none; 
+    transition: 0.3s;
+}
+
+/* Efeito ao clicar na caixinha: Borda brilha sutilmente */
+.login-form input:focus { 
+    border-color: #b112f1; 
+    box-shadow: 0 0 10px rgba(177, 18, 241, 0.2); 
+}
+
+/* Botão Entrar: Grande, roxo e com brilho calibrado */
+.btn-login { 
+    width: 100%; 
+    padding: 1rem; 
+    background: #b112f1; 
+    border-radius: 0.6rem; 
+    color: #fff; 
+    border: none; 
+    font-weight: 900; 
+    text-transform: uppercase; 
+    cursor: pointer; 
+    box-shadow: 0 0 15px rgba(177, 18, 241, 0.3);
+    transition: 0.3s;
+}
+
+/* Efeito de hover no botão */
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(177, 18, 241, 0.5);
+}
+
+/* ==========================================================================
+   6. PÁGINA DE TIERS (TIERS.HTML)
+   ========================================================================== */
+
+.main-tiers { 
+    padding-top: 15vh; 
+    width: 90%; 
+    max-width: 1000px; 
+    margin: 0 auto; 
+    padding-bottom: 5vh; 
+}
+
+.form-section {
+    background: rgba(13, 13, 13, 0.85);
+    border: 0.1rem solid #222;
+    padding: 3vh;
+    border-radius: 1.25rem;
+    margin-bottom: 4vh;
+}
+
+.form-grid-tiers { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 4%; 
+}
+
+.input-group label { 
+    display: block; font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 0.5vh; font-weight: bold; 
+}
+
+.input-group input, .input-group textarea { 
+    width: 100%; padding: 0.8rem; background: #0a0a0a; border: 1px solid #333; border-radius: 0.6rem; color: #fff; outline: none; font-family: inherit; 
+}
+
+.album-card { 
+    display: flex; align-items: center; gap: 3%; padding: 2vh 3%; background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 1rem; margin-bottom: 2vh; 
+}
+
+.album-cover { 
+    width: 5rem; height: 5rem; border-radius: 0.6rem; object-fit: cover; 
+}
+
+.custom-range { 
+    width: 100%; accent-color: #b112f1; 
+}
+
+
+/* ==========================================================================
+   7. RESPONSIVIDADE (MOBILE)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .main-title { font-size: 2.5rem; }
+    .form-grid-tiers, .contact-buttons { flex-direction: column; align-items: center; }
+    .btn-contact { width: 90%; min-width: unset; }
+    .member-card { min-width: 90%; }
+}
+/* ================================================================
+    ADICIONAIS PARA A TELA DE AVALIAÇÃO (TIERS.HTML)
+    Novas linhas para suportar o código de avaliação detalhada.
+================================================================ */
+
+/* Container de cards de vidro (Glass-card) */
+.glass-card {
+    background: rgba(13, 13, 13, 0.8);
+    backdrop-filter: blur(10px);
+    border: 0.1rem solid #222;
+    padding: 2.5rem;
+    border-radius: 1.25rem;
+    margin-bottom: 3vh;
+}
+
+/* Grid para o formulário de adicionar álbum */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+/* Estilo para as caixas de texto (Textarea) */
+textarea {
+    width: 100%;
+    min-height: 120px;
+    background: #0a0a0a;
+    border: 0.1rem solid #333;
+    border-radius: 0.6rem;
+    color: #fff;
+    padding: 0.8rem;
+    font-family: inherit;
+    resize: vertical;
+}
+
+/* Botão de Upload Customizado */
+.upload-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: #222;
+    border: 0.1rem solid #b112f1;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.upload-btn:hover {
+    background: rgba(177, 18, 241, 0.2);
+}
+
+/* Slider de Nota (Input Range) */
+input[type="range"] {
+    width: 100%;
+    accent-color: #b112f1;
+    height: 6px;
+    background: #333;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Valor da nota ao lado do slider */
+.slider-value {
+    color: #b112f1;
+    font-weight: 900;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(177, 18, 241, 0.5);
+}
+
+/* Preview da Capa antes de adicionar */
+.cover-preview {
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 2px solid #b112f1;
+    margin-bottom: 1rem;
+}
+/* Badges de Tier na Coleção */
+.tier-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Cores Padrão MusiCave (Tiers e Notas) */
+.tier-s, .note-s { background: #b112f1; color: #fff; box-shadow: 0 0 10px rgba(177, 18, 241, 0.4); }
+.tier-a, .note-a { background: #22c55e; color: #fff; }
+.tier-b, .note-b { background: #3b82f6; color: #fff; }
+.tier-c, .note-c { background: #eab308; color: #fff; }
+.tier-d, .note-d { background: #ef4444; color: #fff; }
+
+/* Estilo do visor de nota ao lado do slider */
+.note-indicator {
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+
+.compact-btn {
+    padding: 0.4rem 0.8rem;
+    min-width: 80px;
+}
+
+.danger-btn {
+    background: #cc0000;
+    min-width: 80px;
+}
+
+.track-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #333;
+}
+
+.track-card-header,
+.rating-label-row,
+.story-track-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.track-card-header {
+    margin-bottom: 1rem;
+}
+
+.track-ratings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.story-track-row {
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 5px;
+}
+
+.story-track-row strong {
+    color: #b112f1;
+}
+
+@media (max-width: 768px) {
+    .form-grid,
+    .track-ratings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .album-card,
+    .album-actions {
+        align-items: stretch;
+    }
+}
