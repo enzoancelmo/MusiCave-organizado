@@ -60,8 +60,14 @@ http://localhost:3000
 ```text
 musicave/
   backend/
-    server.js        # servidor principal, API e login/cadastro
+    app.js           # configuracao do Express, middlewares e rotas
+    server.js        # inicializacao do servidor
     entrar.js        # compatibilidade: encaminha para o servidor principal
+    config/          # variaveis de ambiente e caminhos
+    controllers/     # regras das requisicoes HTTP
+    db/              # conexao e inicializacao do banco
+    routes/          # rotas da API
+    utils/           # funcoes auxiliares
   frontend/
     index.html       # pagina inicial
     tiers.html       # tela de cadastro, avaliacao e tier list
@@ -83,7 +89,18 @@ musicave/
     migrations/      # historico de criacao/evolucao do banco
   docker-compose.yml # Postgres e Adminer
   package.json       # scripts e dependencias Node
+  scripts/           # utilitarios do projeto
 ```
+
+## API principal
+
+- `GET /api/health`
+- `GET /api/albums`
+- `POST /api/albums`
+- `PUT /api/albums/:id`
+- `DELETE /api/albums/:id`
+- `POST /api/register`
+- `POST /api/login`
 
 ## Documentacao do banco
 
