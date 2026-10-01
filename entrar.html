@@ -10,12 +10,15 @@
 
     <header class="header">
         <div class="header-inner">
-            <div class="logo">MUSICAVE</div>
+            <div class="logo">MUSI<span class="highlight">CAVE</span></div>
             <nav class="menu">
                 <a href="index.html">Início</a>
                 <a href="sobre.html">Sobre</a>
                 <a href="tiers.html">Tiers</a>
             </nav>
+            <div class="header-actions" style="visibility: hidden;">
+                <a href="#" class="btn-nav">Fantasma</a>
+            </div>
         </div>
     </header>
 
@@ -143,17 +146,12 @@
                     body: JSON.stringify({ email, senha })
                 });
 
-const data = await parseResponse(res);
+                const data = await parseResponse(res);
+                alert(data.message);
 
-if (data.user?.name) {
-    localStorage.setItem("musicaveUser", JSON.stringify(data.user));
-}
-
-if (data.token) {
-    localStorage.setItem("musicaveToken", data.token);
-}
-
-window.location.href = "tiers.html";
+                if (data.user?.name) {
+                    localStorage.setItem("musicaveUser", JSON.stringify(data.user));
+                }
 
             } catch (err) {
                 console.error(err);
