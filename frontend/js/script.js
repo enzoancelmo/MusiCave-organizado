@@ -60,7 +60,7 @@ async function loadAlbums() {
     renderTierList();
   } catch (error) {
     console.error(error);
-    showToast("Erro de conexao", error.message, "error");
+    showToast("Erro de conexão", error.message, "error");
   }
 }
 
@@ -120,7 +120,7 @@ function renderTierList() {
   const sortedAlbums = [...albums].sort((a, b) => Number(b.tierScore || 0) - Number(a.tierScore || 0));
 
   if (sortedAlbums.length === 0) {
-    elements.tierList.innerHTML = '<div class="glass-card empty-state"><h3>Nenhum album ainda</h3></div>';
+    elements.tierList.innerHTML = '<div class="glass-card empty-state"><h3>Nenhum álbum ainda</h3></div>';
     return;
   }
 
@@ -207,15 +207,28 @@ function renderEvaluation() {
 async function handleAlbumSubmit(event) {
   event.preventDefault();
 
-  const trackNames = document
-    .getElementById("tracklist")
-    .value.split("\n")
+  const albumName = document.getElementById("albumName").value.trim();
+  const artistName = document.getElementById("artistName").value.trim();
+  const tracklistRaw = document.getElementById("tracklist").value;
+
+  // VALIDAÇÕES RÍGIDAS (Impede submissão sem os dados)
+  if (!albumName) return alert("⚠️ Erro: O nome do álbum é obrigatório!");
+  if (!artistName) return alert("⚠️ Erro: O nome do artista é obrigatório!");
+  if (!coverBase64) return alert("⚠️ Erro: Você precisa fazer o upload da capa do álbum!");
+  if (!tracklistRaw.trim()) return alert("⚠️ Erro: A tracklist não pode estar vazia!");
+
+  const trackNames = tracklistRaw
+    .split("\n")
     .map((track) => track.trim())
     .filter(Boolean);
 
+  if (trackNames.length === 0) {
+    return alert("⚠️ Erro: Adicione pelo menos uma faixa válida na tracklist!");
+  }
+
   const album = {
-    name: document.getElementById("albumName").value.trim(),
-    artist: document.getElementById("artistName").value.trim(),
+    name: albumName,
+    artist: artistName,
     cover: coverBase64,
     tracks: trackNames.map((name, index) => ({
       name,
@@ -232,7 +245,7 @@ async function handleAlbumSubmit(event) {
     elements.albumForm.reset();
     clearCover();
     await loadAlbums();
-    showToast("Album adicionado", "A colecao foi atualizada.");
+    showToast("Álbum adicionado", "A coleção foi atualizada.");
   } catch (error) {
     console.error(error);
     showToast("Erro ao salvar", error.message, "error");
@@ -271,7 +284,7 @@ async function saveEvaluation() {
 
   try {
     await saveAlbum(album, "PUT");
-    showToast(`Nota: ${album.tierScore.toFixed(2)}`, `Album classificado como Tier ${album.tier}.`);
+    showToast(`Nota: ${album.tierScore.toFixed(2)}`, `Álbum classificado como Tier ${album.tier}.`);
   } catch (error) {
     console.error(error);
     showToast("Erro ao salvar", error.message, "error");
@@ -311,7 +324,7 @@ async function exportReviewImage() {
   storyEl.classList.remove("hidden");
 
   try {
-    if (!window.html2canvas) throw new Error("Biblioteca de exportacao nao carregada.");
+    if (!window.html2canvas) throw new Error("Biblioteca de exportação não carregada.");
 
     const canvas = await window.html2canvas(storyEl, {
       useCORS: true,
@@ -381,14 +394,14 @@ window.openDeleteModal = async function openDeleteModal(id) {
   const album = albums.find((item) => String(item.id) === String(id));
   if (!album) return;
 
-  const confirmed = confirm(`Remover "${album.name}" da colecao?`);
+  const confirmed = confirm(`Remover "${album.name}" da coleção?`);
   if (!confirmed) return;
 
   try {
     await requestJson(`${API_URL}/${album.id}`, { method: "DELETE" });
     albums = albums.filter((item) => String(item.id) !== String(album.id));
     renderTierList();
-    showToast("Album removido", "A colecao foi atualizada.");
+    showToast("Álbum removido", "A coleção foi atualizada.");
   } catch (error) {
     console.error(error);
     showToast("Erro ao remover", error.message, "error");
